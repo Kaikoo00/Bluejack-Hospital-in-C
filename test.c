@@ -141,7 +141,7 @@ int main()
             display();
         }
         if(ch==3){
-            if(data_count==0){
+            if(head==NULL){
                 printf("\nThere's no queue yet!\n");
                 system("pause");
                 system("cls");
