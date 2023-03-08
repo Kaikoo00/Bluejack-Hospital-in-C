@@ -116,8 +116,53 @@ void delete_head(){
     data_count--;
 }
 
+void delete_tail(){
+    if(head==NULL){
+        printf("Please create a new linked list first.\n");
+        return;
+    }
+	tail = tail->prev;
+	tail->next = NULL;
+    data_count--;
+}
+
 void print_menu(){
     printf("=================\nBluejack Hospital\n=================\n1. Insert\n2. View\n3. Next Queue\n4. Exit\n>>");
+}
+
+void delete_midList(int pos){
+    if(head==NULL){
+        printf("Please create a new linked list first.\n");
+        return;
+    }
+
+	if(pos==0){
+		delete_head();
+		return;
+	}
+
+	if(pos>=data_count){
+		printf("Invalid Position\n");
+		return;
+	}
+
+	if(pos==data_count-1){
+		delete_tail();
+		return;
+	}
+
+	struct node *curr, *prev, *next;
+	curr = head;
+	for(int i = 0; i<pos; i++){
+		prev = curr;
+		curr = curr->next;
+		next = curr->next;
+	}
+	prev->next = next;
+	next->prev = prev;
+	free(curr);
+    data_count--;
+    return;
 }
 
 int main()
@@ -141,18 +186,57 @@ int main()
             display();
         }
         if(ch==3){
-            if(head==NULL){
+            if(head == NULL){
                 printf("\nThere's no queue yet!\n");
                 system("pause");
                 system("cls");
                 continue;
             }
+            int redStatus=0; int yellowStatus=0; int greenStatus=0;int i=0;
+            struct node *patient;
+
+            for(struct node *curr=head; curr!=NULL; curr=curr->next){
+                if(strcmp(curr->status, "Red")==0){
+                    redStatus = 1;
+                    patient = curr;
+                    break;
+                }
+                i++;
+            }
+
+            if(redStatus==0){
+                i=0;
+                for(struct node *curr=head; curr!=NULL; curr=curr->next){
+                    if(strcmp(curr->status, "Yellow")==0){
+                        yellowStatus=1;
+                        if(redStatus == 0){
+                            patient = curr;
+                            break;
+                        }
+                    }
+                    i++;
+                }
+            }
+            
+            if(redStatus==0 && yellowStatus==0){
+                i=0;
+                for(struct node *curr=head; curr!=NULL; curr=curr->next){
+                    if(strcmp(curr->status, "Green")==0){
+                        greenStatus=1;
+                        if(redStatus == 0 && yellowStatus == 0){
+                            patient = curr;
+                            break;
+                        }
+                    }
+                    i++;
+                }
+            }
             system("cls");
-            printf("Name\t        : %s\n", head->name);
-            printf("Age\t        : %d\n", head->age);
-            printf("Description\t: %s\n", head->desc);
-            printf("Code\t        : %s\n", head->status);
-            delete_head();
+            printf("Name\t        : %s\n", patient->name);
+            printf("Age\t        : %d\n", patient->age);
+            printf("Description\t: %s\n", patient->desc);
+            printf("Code\t        : %s\n", patient->status);
+            delete_midList(i);
             system("pause");
             system("cls");
         }
@@ -164,3 +248,4 @@ int main()
     }
     return 0;
 }
+
